@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的2025年度关键词生成器</title>
+    <title>我的2025年度20问</title>
     <style>
         * {
             margin: 0;
@@ -45,42 +45,113 @@
             font-size: 1.1rem;
         }
         
-        .input-group {
-            margin-bottom: 25px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #4a5568;
-            font-size: 1.1rem;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e2e8f0;
+        .progress-container {
+            background: #f7fafc;
             border-radius: 10px;
-            font-size: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4299e1;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .questions-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .question-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
             transition: all 0.3s;
         }
         
-        input:focus, textarea:focus {
+        .question-item:hover {
+            border-color: #4299e1;
+            background: #f0f8ff;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .answer-box {
+            width: 100%;
+            min-height: 80px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .answer-box:focus {
             outline: none;
             border-color: #4299e1;
             box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
         }
         
-        textarea {
-            min-height: 120px;
-            resize: vertical;
+        .char-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 30px;
         }
         
         .btn {
-            display: block;
-            width: 100%;
-            padding: 18px;
+            display: inline-block;
+            padding: 18px 50px;
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
             border: none;
@@ -89,12 +160,18 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            margin-top: 30px;
         }
         
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(106, 17, 203, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         .result {
@@ -109,22 +186,24 @@
         .result h3 {
             color: #2d3748;
             margin-bottom: 15px;
+            text-align: center;
         }
         
         .keywords {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-top: 15px;
+            margin-top: 20px;
+            justify-content: center;
         }
         
         .keyword {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             box-shadow: 0 5px 15px rgba(106, 17, 203, 0.2);
         }
         
@@ -168,6 +247,12 @@
             border-top: 1px solid #e2e8f0;
         }
         
+        .question-counter {
+            font-size: 1.1rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -177,58 +262,90 @@
                 font-size: 1.8rem;
             }
             
+            .question-number {
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+                font-size: 0.8rem;
+            }
+            
+            .question-text {
+                font-size: 1rem;
+            }
+            
             .keyword {
                 font-size: 1rem;
-                padding: 8px 16px;
+                padding: 10px 20px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>✨ 我的2025年度关键词</h1>
-        <p class="subtitle">用AI回顾你的2025，发现成长轨迹</p>
+        <h1>✨ 2025年度20问</h1>
+        <p class="subtitle">匿名回顾你的2025，发现成长轨迹</p>
         
-        <div class="input-group">
-            <label for="userId">👤 你的学号/昵称：</label>
-            <input type="text" id="userId" placeholder="请输入你的学号或昵称">
+        <div class="progress-container">
+            <div class="progress-header">
+                <div class="question-counter">完成度: <span id="completedCount">0</span>/20</div>
+                <div id="progressPercent">0%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
         </div>
         
-        <div class="input-group">
-            <label for="answer">📝 请描述你的2025年：</label>
-            <textarea id="answer" placeholder="例如：2025年我学习了新的技能，参加了有意义的活动，克服了一些挑战，认识了许多新朋友...（建议写100字以上）"></textarea>
+        <div class="questions-container" id="questionsContainer">
+            <!-- 20个问题会动态生成在这里 -->
         </div>
         
-        <button class="btn" onclick="generateKeywords()">
-            🎯 生成我的年度关键词
-        </button>
+        <div class="actions">
+            <button class="btn" id="generateBtn" onclick="generateKeywords()" disabled>
+                🎯 生成我的年度关键词
+            </button>
+        </div>
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p>AI正在分析你的回答，请稍候...</p>
+            <p class="notice" style="margin-top: 15px; font-size: 0.9rem;">
+                正在分析你的20个回答，为你生成个性化年度关键词...
+            </p>
         </div>
         
         <div class="result" id="result">
             <h3>🎉 你的2025年度关键词：</h3>
-            <p id="userInfo"></p>
+            <p style="text-align: center; color: #718096; margin-bottom: 10px;">
+                基于你回答的20个问题，AI为你生成以下年度关键词
+            </p>
             <div class="keywords" id="keywords">
                 <!-- 关键词会显示在这里 -->
             </div>
             <div class="notice">
-                💡 这些关键词是基于你的回答，通过AI分析生成的。它们反映了你2025年的成长和变化。
+                💡 这些关键词是基于你对20个问题的回答，通过AI分析生成的。它们反映了你2025年的成长、挑战和收获。
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="resetForm()" style="padding: 12px 30px; font-size: 1rem;">
+                    🔄 重新开始
+                </button>
             </div>
         </div>
         
         <div class="notice">
             <p><strong>使用说明：</strong></p>
-            <p>1. 填写你的学号/昵称和2025年回顾</p>
-            <p>2. 点击"生成我的年度关键词"按钮</p>
-            <p>3. 稍等片刻，AI会为你生成5个年度关键词</p>
-            <p>4. 可以将结果截图保存或分享</p>
+            <p>1. 回答下方所有20个问题（每个问题建议回答20-100字）</p>
+            <p>2. 所有问题回答完成后，"生成年度关键词"按钮将变为可用</p>
+            <p>3. 点击按钮，AI会分析你的所有回答并生成5个年度关键词</p>
+            <p>4. <strong>完全匿名</strong> - 无需输入任何个人信息</p>
         </div>
         
         <div class="footer">
-            <p>© 2025 年度关键词生成器 | 基于智谱AI大语言模型</p>
+            <p>© 2025 年度20问 | 基于智谱AI大语言模型 | 完全匿名使用</p>
         </div>
     </div>
 
@@ -238,19 +355,97 @@
         // 智谱AI的API地址
         const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
         
-        // 生成关键词的函数
-        async function generateKeywords() {
-            const userId = document.getElementById('userId').value;
-            const answer = document.getElementById('answer').value;
+        // 20个问题列表
+        const questions = [
+            "2025年你学到的最有价值的一门课程或技能是什么？",
+            "今年你完成的最令自己骄傲的成就是什么？",
+            "2025年你遇到的最大挑战是什么？你是如何应对的？",
+            "今年你认识了哪些对你影响深远的新朋友或导师？",
+            "2025年你读过的哪本书或看过的哪部电影对你影响最大？",
+            "今年你在个人成长方面有什么重要的领悟或改变？",
+            "2025年你参与的最有意义的社团活动或项目是什么？",
+            "今年你养成了什么新的好习惯？",
+            "2025年你去过的最难忘的地方是哪里？为什么？",
+            "今年你对未来的职业规划有什么新的认识或调整？",
+            "2025年你克服了哪个曾经害怕或不敢尝试的事情？",
+            "今年你在时间管理或学习效率方面有什么改进？",
+            "2025年你最感激的人是谁？为什么？",
+            "今年你对自己专业领域有什么新的理解或发现？",
+            "2025年你为身心健康做了哪些努力？",
+            "今年你在人际关系方面学到了什么重要的道理？",
+            "2025年你最想感谢自己的一件事是什么？",
+            "今年你对社会或世界有了哪些新的认识？",
+            "2025年你为未来做了哪些重要的准备或投资？",
+            "如果用一句话总结你的2025年，会是什么？"
+        ];
+        
+        // 存储用户回答
+        let userAnswers = new Array(20).fill('');
+        
+        // 初始化页面
+        function initPage() {
+            const container = document.getElementById('questionsContainer');
             
-            // 验证输入
-            if (!userId) {
-                alert('请输入你的学号或昵称');
-                return;
+            questions.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question-item';
+                questionElement.innerHTML = `
+                    <div class="question-text">
+                        <span class="question-number">${index + 1}</span>
+                        ${question}
+                    </div>
+                    <textarea 
+                        class="answer-box" 
+                        id="answer-${index}" 
+                        placeholder="请在这里写下你的回答（建议20-100字）"
+                        rows="3"
+                        oninput="updateAnswer(${index}, this.value)"
+                    >${userAnswers[index]}</textarea>
+                    <div class="char-count">
+                        <span id="char-count-${index}">${userAnswers[index].length}</span>/500
+                    </div>
+                `;
+                
+                container.appendChild(questionElement);
+            });
+            
+            updateProgress();
+        }
+        
+        // 更新回答
+        function updateAnswer(index, value) {
+            userAnswers[index] = value;
+            document.getElementById(`char-count-${index}`).textContent = value.length;
+            updateProgress();
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(answer => answer.trim().length > 0).length;
+            const completedCountElement = document.getElementById('completedCount');
+            const progressFillElement = document.getElementById('progressFill');
+            const progressPercentElement = document.getElementById('progressPercent');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            completedCountElement.textContent = answeredCount;
+            const percentage = (answeredCount / questions.length) * 100;
+            progressFillElement.style.width = `${percentage}%`;
+            progressPercentElement.textContent = `${Math.round(percentage)}%`;
+            
+            // 所有问题都回答了才启用生成按钮
+            if (answeredCount === questions.length) {
+                generateBtn.disabled = false;
+            } else {
+                generateBtn.disabled = true;
             }
-            
-            if (!answer || answer.length < 20) {
-                alert('请详细描述你的2025年（至少20个字）');
+        }
+        
+        // 生成关键词
+        async function generateKeywords() {
+            // 验证是否所有问题都已回答
+            const emptyAnswers = userAnswers.some(answer => !answer.trim());
+            if (emptyAnswers) {
+                alert('请先回答所有20个问题');
                 return;
             }
             
@@ -260,18 +455,21 @@
             
             try {
                 // 准备要发送给AI的内容
-                const prompt = `请根据用户对2025年的描述，生成5个年度关键词。
+                let prompt = "请根据以下用户对20个年度问题的回答，生成5个年度关键词。\n\n";
                 
-用户描述：
-${answer}
-
-请遵循以下要求：
+                // 添加所有问题和回答
+                questions.forEach((question, index) => {
+                    prompt += `${index + 1}. ${question}\n回答：${userAnswers[index]}\n\n`;
+                });
+                
+                prompt += `\n请根据以上所有回答，生成5个年度关键词，要求：
 1. 生成5个关键词，每个关键词2-4个字
-2. 关键词要能概括用户的成长、成就和变化
-3. 关键词要积极正面
+2. 关键词要能概括用户的整体成长轨迹、成就和变化
+3. 关键词要积极正面，体现个人发展
 4. 关键词之间用逗号分隔
+5. 基于用户的具体回答进行分析，不要使用通用词汇
 
-示例格式：成长,突破,感恩,自律,探索
+示例格式：成长突破,专业精进,感恩遇见,自律养成,探索未知
 
 关键词：`;
                 
@@ -290,7 +488,7 @@ ${answer}
                                 content: prompt
                             }
                         ],
-                        max_tokens: 200,
+                        max_tokens: 300,
                         temperature: 0.7
                     })
                 });
@@ -311,17 +509,17 @@ ${answer}
                 // 分割关键词
                 let keywords = aiResponse.split(/[,，]/)
                     .map(k => k.trim())
-                    .filter(k => k.length > 0 && k.length <= 4);
+                    .filter(k => k.length > 0 && k.length <= 6);
                 
-                // 如果解析失败，使用默认关键词
+                // 如果解析失败，使用基于回答生成的默认关键词
                 if (keywords.length === 0) {
-                    keywords = ['成长', '突破', '感恩', '自律', '探索'];
+                    keywords = generateDefaultKeywords();
                 }
                 
                 // 如果关键词不足5个，补充一些
-                const defaultKeywords = ['成长', '突破', '感恩', '自律', '探索', '蜕变', '坚持', '收获', '勇气', '进步'];
                 while (keywords.length < 5) {
-                    const randomKeyword = defaultKeywords[Math.floor(Math.random() * defaultKeywords.length)];
+                    const additionalKeywords = ['成长突破', '自我发现', '感恩遇见', '勇敢尝试', '持续学习'];
+                    const randomKeyword = additionalKeywords[Math.floor(Math.random() * additionalKeywords.length)];
                     if (!keywords.includes(randomKeyword)) {
                         keywords.push(randomKeyword);
                     }
@@ -331,14 +529,14 @@ ${answer}
                 keywords = keywords.slice(0, 5);
                 
                 // 显示结果
-                displayResults(userId, keywords);
+                displayResults(keywords);
                 
             } catch (error) {
                 console.error("出错了：", error);
                 
                 // 如果API调用失败，使用模拟数据
-                const mockKeywords = ['成长', '突破', '感恩', '自律', '探索'];
-                displayResults(userId, mockKeywords);
+                const mockKeywords = generateDefaultKeywords();
+                displayResults(mockKeywords);
                 
                 alert('AI服务暂时繁忙，已使用模拟数据展示效果');
             } finally {
@@ -347,10 +545,48 @@ ${answer}
             }
         }
         
-        // 显示结果的函数
-        function displayResults(userId, keywords) {
-            document.getElementById('userInfo').textContent = `用户：${userId} | 生成时间：${new Date().toLocaleString()}`;
+        // 基于用户回答生成默认关键词
+        function generateDefaultKeywords() {
+            const allText = userAnswers.join(' ');
+            const keywords = [];
             
+            // 基于内容分析生成关键词
+            if (allText.includes('学习') || allText.includes('课程') || allText.includes('知识')) {
+                keywords.push('求知成长');
+            }
+            if (allText.includes('挑战') || allText.includes('困难') || allText.includes('克服')) {
+                keywords.push('勇敢突破');
+            }
+            if (allText.includes('朋友') || allText.includes('人际') || allText.includes('社交')) {
+                keywords.push('感恩遇见');
+            }
+            if (allText.includes('未来') || allText.includes('规划') || allText.includes('职业')) {
+                keywords.push('远见卓识');
+            }
+            if (allText.includes('健康') || allText.includes('身心') || allText.includes('运动')) {
+                keywords.push('身心平衡');
+            }
+            if (allText.includes('成就') || allText.includes('骄傲') || allText.includes('完成')) {
+                keywords.push('成就卓越');
+            }
+            if (allText.includes('感谢') || allText.includes('感激') || allText.includes('感恩')) {
+                keywords.push('心怀感恩');
+            }
+            
+            // 确保有5个关键词
+            const defaultKeywords = ['自我成长', '勇敢尝试', '持续学习', '时间管理', '探索未知'];
+            while (keywords.length < 5) {
+                const randomKeyword = defaultKeywords[Math.floor(Math.random() * defaultKeywords.length)];
+                if (!keywords.includes(randomKeyword)) {
+                    keywords.push(randomKeyword);
+                }
+            }
+            
+            return keywords.slice(0, 5);
+        }
+        
+        // 显示结果的函数
+        function displayResults(keywords) {
             const keywordsContainer = document.getElementById('keywords');
             keywordsContainer.innerHTML = '';
             
@@ -367,13 +603,78 @@ ${answer}
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         }
         
-        // 页面加载时的一些初始化
+        // 重置表单
+        function resetForm() {
+            if (confirm('确定要重新开始吗？这将清空所有回答。')) {
+                userAnswers = new Array(20).fill('');
+                
+                // 清空所有文本区域
+                for (let i = 0; i < 20; i++) {
+                    const textarea = document.getElementById(`answer-${i}`);
+                    if (textarea) {
+                        textarea.value = '';
+                    }
+                    const charCount = document.getElementById(`char-count-${i}`);
+                    if (charCount) {
+                        charCount.textContent = '0';
+                    }
+                }
+                
+                // 重置进度
+                updateProgress();
+                
+                // 隐藏结果
+                document.getElementById('result').style.display = 'none';
+                
+                // 滚动到顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
+            initPage();
+            
             // 检查是否有示例数据（用于演示）
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('demo')) {
-                document.getElementById('userId').value = '小明同学';
-                document.getElementById('answer').value = '2025年是我大学生活中最充实的一年。我参加了全国大学生创新创业大赛并获得三等奖，学会了Python编程和数据分析，在暑假实习中积累了宝贵的工作经验。我还坚持每周健身三次，成功减重5公斤。最重要的是，我学会了时间管理，平衡了学习、社团和休息。这一年让我更加明确了自己的职业方向，也结识了许多志同道合的朋友。';
+                // 设置一些示例回答
+                const sampleAnswers = [
+                    "学习了Python编程和数据分析，掌握了机器学习的基本原理。",
+                    "完成了第一个独立研究项目，并在校内学术会议上展示。",
+                    "平衡学业、社团和实习，通过时间管理和优先级排序成功应对。",
+                    "认识了计算机系的王教授，他给了我很多职业发展建议。",
+                    "《深度工作》这本书让我学会了如何提高工作效率和专注力。",
+                    "学会了更好的情绪管理和压力调节方法。",
+                    "参与了校园环保社团的垃圾分类项目，影响了500多名同学。",
+                    "养成了每天阅读30分钟和每周锻炼3次的习惯。",
+                    "去了西安，参观了兵马俑，感受到了中国历史的深厚底蕴。",
+                    "确定了自己想从事人工智能方向的工作，开始学习相关课程。",
+                    "在公开演讲比赛中克服了舞台恐惧，获得了三等奖。",
+                    "使用番茄工作法，学习效率提高了30%左右。",
+                    "感谢我的室友，在我生病时照顾我，在学习上帮助我。",
+                    "认识到计算机科学不仅是编程，更是解决问题的思维方式。",
+                    "开始每周跑步3次，练习冥想，身心健康明显改善。",
+                    "学会了更有效的沟通方式，理解和尊重不同观点。",
+                    "感谢自己在最困难的时候没有放弃，坚持完成了挑战。",
+                    "认识到科技发展对社会的双重影响，需要更多人文关怀。",
+                    "参加了职业规划课程，建立了LinkedIn个人资料，开始积累作品集。",
+                    "2025年是成长、挑战与收获并存的一年，让我更加明确未来的方向。"
+                ];
+                
+                sampleAnswers.forEach((answer, index) => {
+                    userAnswers[index] = answer;
+                    const textarea = document.getElementById(`answer-${index}`);
+                    if (textarea) {
+                        textarea.value = answer;
+                    }
+                    const charCount = document.getElementById(`char-count-${index}`);
+                    if (charCount) {
+                        charCount.textContent = answer.length;
+                    }
+                });
+                
+                updateProgress();
             }
         });
     </script>
