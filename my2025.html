@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的2025年度关键词生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(106, 17, 203, 0.3);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f7fafc;
+            border-radius: 15px;
+            border-left: 5px solid #4299e1;
+            display: none;
+        }
+        
+        .result h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .keyword {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.2);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #6a11cb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .notice {
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #718096;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .keyword {
+                font-size: 1rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ 我的2025年度关键词</h1>
+        <p class="subtitle">用AI回顾你的2025，发现成长轨迹</p>
+        
+        <div class="input-group">
+            <label for="userId">👤 你的学号/昵称：</label>
+            <input type="text" id="userId" placeholder="请输入你的学号或昵称">
+        </div>
+        
+        <div class="input-group">
+            <label for="answer">📝 请描述你的2025年：</label>
+            <textarea id="answer" placeholder="例如：2025年我学习了新的技能，参加了有意义的活动，克服了一些挑战，认识了许多新朋友...（建议写100字以上）"></textarea>
+        </div>
+        
+        <button class="btn" onclick="generateKeywords()">
+            🎯 生成我的年度关键词
+        </button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>AI正在分析你的回答，请稍候...</p>
+        </div>
+        
+        <div class="result" id="result">
+            <h3>🎉 你的2025年度关键词：</h3>
+            <p id="userInfo"></p>
+            <div class="keywords" id="keywords">
+                <!-- 关键词会显示在这里 -->
+            </div>
+            <div class="notice">
+                💡 这些关键词是基于你的回答，通过AI分析生成的。它们反映了你2025年的成长和变化。
+            </div>
+        </div>
+        
+        <div class="notice">
+            <p><strong>使用说明：</strong></p>
+            <p>1. 填写你的学号/昵称和2025年回顾</p>
+            <p>2. 点击"生成我的年度关键词"按钮</p>
+            <p>3. 稍等片刻，AI会为你生成5个年度关键词</p>
+            <p>4. 可以将结果截图保存或分享</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 年度关键词生成器 | 基于智谱AI大语言模型</p>
+        </div>
+    </div>
+
+    <script>
+        // 这里放你的API Key
+        const API_KEY = "a5b59beb174348f98cbd130e8fc184ea.bmPJTSdcvIHll5xC";
+        // 智谱AI的API地址
+        const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+        
+        // 生成关键词的函数
+        async function generateKeywords() {
+            const userId = document.getElementById('userId').value;
+            const answer = document.getElementById('answer').value;
+            
+            // 验证输入
+            if (!userId) {
+                alert('请输入你的学号或昵称');
+                return;
+            }
+            
+            if (!answer || answer.length < 20) {
+                alert('请详细描述你的2025年（至少20个字）');
+                return;
+            }
+            
+            // 显示加载动画
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            
+            try {
+                // 准备要发送给AI的内容
+                const prompt = `请根据用户对2025年的描述，生成5个年度关键词。
+                
+用户描述：
+${answer}
+
+请遵循以下要求：
+1. 生成5个关键词，每个关键词2-4个字
+2. 关键词要能概括用户的成长、成就和变化
+3. 关键词要积极正面
+4. 关键词之间用逗号分隔
+
+示例格式：成长,突破,感恩,自律,探索
+
+关键词：`;
+                
+                // 调用智谱AI API
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "glm-4",
+                        messages: [
+                            {
+                                role: "user",
+                                content: prompt
+                            }
+                        ],
+                        max_tokens: 200,
+                        temperature: 0.7
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`请求失败，状态码：${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // 提取AI返回的关键词
+                let aiResponse = data.choices[0].message.content;
+                
+                // 清理关键词（移除多余文本）
+                aiResponse = aiResponse.replace(/关键词[：:]\s*/g, '');
+                aiResponse = aiResponse.split(/[。，！？\n]/)[0];
+                
+                // 分割关键词
+                let keywords = aiResponse.split(/[,，]/)
+                    .map(k => k.trim())
+                    .filter(k => k.length > 0 && k.length <= 4);
+                
+                // 如果解析失败，使用默认关键词
+                if (keywords.length === 0) {
+                    keywords = ['成长', '突破', '感恩', '自律', '探索'];
+                }
+                
+                // 如果关键词不足5个，补充一些
+                const defaultKeywords = ['成长', '突破', '感恩', '自律', '探索', '蜕变', '坚持', '收获', '勇气', '进步'];
+                while (keywords.length < 5) {
+                    const randomKeyword = defaultKeywords[Math.floor(Math.random() * defaultKeywords.length)];
+                    if (!keywords.includes(randomKeyword)) {
+                        keywords.push(randomKeyword);
+                    }
+                }
+                
+                // 如果关键词超过5个，只取前5个
+                keywords = keywords.slice(0, 5);
+                
+                // 显示结果
+                displayResults(userId, keywords);
+                
+            } catch (error) {
+                console.error("出错了：", error);
+                
+                // 如果API调用失败，使用模拟数据
+                const mockKeywords = ['成长', '突破', '感恩', '自律', '探索'];
+                displayResults(userId, mockKeywords);
+                
+                alert('AI服务暂时繁忙，已使用模拟数据展示效果');
+            } finally {
+                // 隐藏加载动画
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+        
+        // 显示结果的函数
+        function displayResults(userId, keywords) {
+            document.getElementById('userInfo').textContent = `用户：${userId} | 生成时间：${new Date().toLocaleString()}`;
+            
+            const keywordsContainer = document.getElementById('keywords');
+            keywordsContainer.innerHTML = '';
+            
+            keywords.forEach(keyword => {
+                const keywordElement = document.createElement('div');
+                keywordElement.className = 'keyword';
+                keywordElement.textContent = keyword;
+                keywordsContainer.appendChild(keywordElement);
+            });
+            
+            document.getElementById('result').style.display = 'block';
+            
+            // 滚动到结果位置
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 页面加载时的一些初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否有示例数据（用于演示）
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('demo')) {
+                document.getElementById('userId').value = '小明同学';
+                document.getElementById('answer').value = '2025年是我大学生活中最充实的一年。我参加了全国大学生创新创业大赛并获得三等奖，学会了Python编程和数据分析，在暑假实习中积累了宝贵的工作经验。我还坚持每周健身三次，成功减重5公斤。最重要的是，我学会了时间管理，平衡了学习、社团和休息。这一年让我更加明确了自己的职业方向，也结识了许多志同道合的朋友。';
+            }
+        });
+    </script>
+</body>
+</html>
